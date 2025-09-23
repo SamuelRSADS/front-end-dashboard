@@ -38,7 +38,6 @@ function StepAddress({
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data);
     onData(data);
     onNext();
   };

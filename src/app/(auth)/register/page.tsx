@@ -1,46 +1,50 @@
 'use client';
+import StepAddress from '@/components/auth/register/StepAddress';
+import StepInstitution from '@/components/auth/register/StepInstitution';
+import { addressSchema, registerSchema } from '@/schema/authSchema';
 import { useState } from 'react';
 import { z } from 'zod';
-import { registerSchema, addressSchema } from '@/schema/authSchema';
-import StepInstitution from '@/components/auth/register/StepInstitution';
-import StepAddress from '@/components/auth/register/StepAddress';
 
 type InstitutionFormValues = z.infer<typeof registerSchema>;
 type AddressFormValues = z.infer<typeof addressSchema>;
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Register() {
   const [step, setStep] = useState(1);
   const [institutionData, setInstitutionData] =
     useState<InstitutionFormValues | null>(null);
-  const [addressData, setAddressData] = useState<AddressFormValues | null>(
-    null,
-  );
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const handleNextStep = async () => {
     if (step < 2) {
-      setStep(step + 1);
-    } else {
-      try {
-        if (!institutionData || !addressData) {
-          console.log('Dados incompletos:', { institutionData, addressData });
-          throw new Error('Dados incompletos');
-        }
+      setStep((step) => step + 1);
+    }
+  };
 
-        const fullData = {
-          phone: `+${institutionData.ddi} (${institutionData.ddd}) ${institutionData.telefone}`,
-          ...institutionData,
-          ...addressData,
-        };
-        await fetch(`${API_URL}/auth/signup`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(fullData),
-        });
-      } catch (error) {
-        console.error('Erro ao enviar os dados:', error);
-        return;
+  const handleSubmit = async (addressData: AddressFormValues) => {
+    try {
+      if (!institutionData || !addressData) {
+        console.log('Dados incompletos:', { institutionData, addressData });
+        throw new Error('Dados incompletos');
       }
+      const { ddi, ddd, telefone, ...institutionRest } = institutionData;
+
+      const fullData = {
+        phone: `${ddi} (${ddd}) ${telefone}`,
+        ...institutionRest,
+        ...addressData,
+      };
+
+      const res = await fetch(`${API_URL}/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fullData),
+      });
+
+      console.log('res', res);
+    } catch (error) {
+      console.error('Erro ao enviar os dados:', error);
+      return;
     }
   };
 
@@ -56,10 +60,7 @@ export default function Register() {
             />
           )}
           {step === 2 && (
-            <StepAddress
-              onNext={handleNextStep}
-              onData={(data) => setAddressData(data)}
-            />
+            <StepAddress onNext={handleNextStep} onData={handleSubmit} />
           )}
         </div>
       </div>
