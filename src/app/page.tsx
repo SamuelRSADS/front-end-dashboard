@@ -11,6 +11,7 @@ import { LuEye, LuEyeClosed } from 'react-icons/lu';
 import { z } from 'zod';
 
 type FormValues = z.infer<typeof loginSchema>;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 function Login() {
   const {
@@ -22,8 +23,28 @@ function Login() {
   });
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data);
+    try {
+      fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          if (data.token) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            router.push('/');
+          }
+        });
+    } catch (error) {
+      console.error('Erro ao enviar os dados:', error);
+      return;
+    }
+
     router.push('/');
   };
 
