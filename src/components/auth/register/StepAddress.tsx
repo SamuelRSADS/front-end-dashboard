@@ -6,14 +6,14 @@ import { addressSchema } from '@/schema/authSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { RiLoaderLine } from 'react-icons/ri';
 
 type FormValues = z.infer<typeof addressSchema>;
 
 const apiCep = async (cep: string) => {
   const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
   const data = await response.json();
-  console.log(data);
   return data;
 };
 
@@ -29,6 +29,8 @@ function StepAddress({ onNext }: { onNext: () => void }) {
     resolver: zodResolver(addressSchema),
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     console.log(data);
     onNext();
@@ -39,8 +41,15 @@ function StepAddress({ onNext }: { onNext: () => void }) {
   useEffect(() => {
     const fetchCep = async () => {
       if (cep && cep.length === 8) {
+        setIsLoading(true);
         const data = await apiCep(cep);
+
+        if (data) {
+          setIsLoading(false);
+        }
+
         if (data.erro) {
+          setIsLoading(false);
           return;
         }
         setValue('endereco', data.logradouro);
@@ -73,6 +82,11 @@ function StepAddress({ onNext }: { onNext: () => void }) {
           error={errors.cep?.message}
           className="w-1/2"
           maxLength={8}
+          icon={
+            isLoading ? (
+              <RiLoaderLine size={20} className="animate-spin" />
+            ) : undefined
+          }
         />
       </div>
 
