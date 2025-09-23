@@ -56,7 +56,7 @@ function StepInstitution({ onNext }: { onNext: () => void }) {
 
         <InputCustom
           {...register('complemento')}
-          label="Complemento*"
+          label="Complemento do nome"
           name="name"
           type="string"
           placeholder="Núcleo Caraguatatuba"
