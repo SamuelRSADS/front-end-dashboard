@@ -12,7 +12,13 @@ import { z } from 'zod';
 
 type FormValues = z.infer<typeof registerSchema>;
 
-function StepInstitution({ onNext }: { onNext: () => void }) {
+function StepInstitution({
+  onNext,
+  onData,
+}: {
+  onNext: () => void;
+  onData: (data: FormValues) => void;
+}) {
   const {
     register,
     handleSubmit,
@@ -22,7 +28,7 @@ function StepInstitution({ onNext }: { onNext: () => void }) {
   });
   const [showPassword, setShowPassword] = useState(false);
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data);
+    onData(data);
     onNext();
   };
 
@@ -55,12 +61,12 @@ function StepInstitution({ onNext }: { onNext: () => void }) {
         />
 
         <InputCustom
-          {...register('complemento')}
+          {...register('nameComplement')}
           label="Complemento do nome"
-          name="name"
+          name="nameComplement"
           type="string"
           placeholder="Núcleo Caraguatatuba"
-          error={errors.complemento?.message}
+          error={errors.nameComplement?.message}
           maxLength={50}
         />
 

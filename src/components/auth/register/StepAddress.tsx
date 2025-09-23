@@ -17,7 +17,13 @@ const apiCep = async (cep: string) => {
   return data;
 };
 
-function StepAddress({ onNext }: { onNext: () => void }) {
+function StepAddress({
+  onNext,
+  onData,
+}: {
+  onNext: () => void;
+  onData: (data: FormValues) => void;
+}) {
   const {
     register,
     handleSubmit,
@@ -32,17 +38,17 @@ function StepAddress({ onNext }: { onNext: () => void }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data);
+    onData(data);
     onNext();
   };
 
-  const cep = watch('cep');
+  const zipCode = watch('zipCode');
 
   useEffect(() => {
     const fetchCep = async () => {
-      if (cep && cep.length === 8) {
+      if (zipCode && zipCode.length === 8) {
         setIsLoading(true);
-        const data = await apiCep(cep);
+        const data = await apiCep(zipCode);
 
         if (data) {
           setIsLoading(false);
@@ -52,16 +58,16 @@ function StepAddress({ onNext }: { onNext: () => void }) {
           setIsLoading(false);
           return;
         }
-        setValue('endereco', data.logradouro);
-        setValue('complemento', data.complemento);
-        setValue('cidade', data.localidade);
-        setValue('estado', data.uf);
+        setValue('address', data.logradouro);
+        setValue('addressComplement', data.complemento);
+        setValue('city', data.localidade);
+        setValue('state', data.uf);
 
-        clearErrors(['cidade', 'endereco', 'estado', 'complemento']);
+        clearErrors(['city', 'address', 'state', 'addressComplement']);
       }
     };
     fetchCep();
-  }, [cep, setValue, clearErrors]);
+  }, [zipCode, setValue, clearErrors]);
 
   return (
     <form
@@ -74,12 +80,12 @@ function StepAddress({ onNext }: { onNext: () => void }) {
       </h1>
       <div className="flex mb-2 self-start">
         <InputCustom
-          {...register('cep')}
+          {...register('zipCode')}
           label="CEP"
-          name="cep"
+          name="zipCode"
           type="text"
           placeholder="00000000"
-          error={errors.cep?.message}
+          error={errors.zipCode?.message}
           className="w-1/2"
           maxLength={8}
           icon={
@@ -91,31 +97,31 @@ function StepAddress({ onNext }: { onNext: () => void }) {
       </div>
 
       <InputCustom
-        {...register('endereco')}
+        {...register('address')}
         label="Endereço"
-        name="endereco"
+        name="address"
         type="text"
         placeholder="Nucleo Caraguatatuba"
-        error={errors.endereco?.message}
+        error={errors.address?.message}
         maxLength={40}
       />
 
       <InputCustom
-        {...register('complemento')}
+        {...register('addressComplement')}
         label="Complemento"
-        name="complemento"
+        name="addressComplement"
         type="text"
         placeholder="Apartamento, bloco..."
-        error={errors.complemento?.message}
+        error={errors.addressComplement?.message}
         maxLength={50}
       />
 
       <div className="grid grid-cols-5 gap-4 p-0 w-full">
         <div className="col-span-3">
           <InputCustom
-            {...register('cidade')}
+            {...register('city')}
             label="Cidade"
-            name="cidade"
+            name="city"
             type="text"
             placeholder="Caraguatatuba"
             error={undefined}
@@ -125,9 +131,9 @@ function StepAddress({ onNext }: { onNext: () => void }) {
 
         <div className="col-span-1">
           <InputCustom
-            {...register('numero')}
+            {...register('number')}
             label="N°"
-            name="numero"
+            name="number"
             type="text"
             placeholder="123"
             error={undefined}
@@ -138,9 +144,9 @@ function StepAddress({ onNext }: { onNext: () => void }) {
 
         <div className="col-span-1">
           <InputCustom
-            {...register('estado')}
+            {...register('state')}
             label="Estado"
-            name="estado"
+            name="state"
             type="text"
             placeholder="SP"
             error={undefined}
@@ -151,9 +157,9 @@ function StepAddress({ onNext }: { onNext: () => void }) {
       </div>
 
       <div className="flex flex-col w-full mt-1 text-red-500 text-xs">
-        {errors.cidade && <span>{errors.cidade?.message as string}</span>}
-        {errors.numero && <span>{errors.numero?.message as string}</span>}
-        {errors.estado && <span>{errors.estado?.message as string}</span>}
+        {errors.city && <span>{errors.city?.message as string}</span>}
+        {errors.number && <span>{errors.number?.message as string}</span>}
+        {errors.state && <span>{errors.state?.message as string}</span>}
       </div>
 
       <Button

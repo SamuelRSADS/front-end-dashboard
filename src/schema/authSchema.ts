@@ -5,7 +5,7 @@ export const registerSchema = z.object({
     .string('O nome é obrigatório')
     .min(2, 'O nome deve ter pelo menos 2 caracteres')
     .max(50, 'O nome deve ter no máximo 50 caracteres'),
-  complemento: z
+  nameComplement: z
     .string()
     .max(50, 'O complemento deve ter no máximo 20 caracteres')
     .optional(),
@@ -33,30 +33,30 @@ export const registerSchema = z.object({
 });
 
 export const addressSchema = z.object({
-  cep: z
+  zipCode: z
     .string()
     .min(8, 'O CEP deve ter 8 dígitos')
     .regex(/^\d{5}-?\d{3}$/, 'CEP inválido'),
-  endereco: z
+  address: z
     .string()
     .min(3, 'O endereco deve ter pelo menos 3 caracteres')
     .max(50, 'O endereco deve ter no máximo 100 caracteres'),
-  numero: z
+  number: z
     .string()
     .min(1, 'O número é obrigatório')
     .max(5, 'O número deve ter no máximo 5 caracteres'),
-  cidade: z
+  city: z
     .string()
     .min(2, 'A cidade deve ter pelo menos 2 caracteres')
     .max(25, 'A cidade deve ter no máximo 25 caracteres'),
-  estado: z
+  state: z
     .string()
     .length(2, 'O estado deve ter exatamente 2 letras')
     .regex(
       /^[a-zA-Z]{2}$/,
       'O estado deve estar em formato de sigla (ex: SP, RJ)',
     ),
-  complemento: z
+  addressComplement: z
     .string()
     .max(100, 'O complemento deve ter no máximo 100 caracteres')
     .optional(),
