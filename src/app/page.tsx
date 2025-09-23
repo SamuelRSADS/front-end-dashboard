@@ -1,89 +1,99 @@
 'use client';
 
-import React from 'react';
 import Button from '@/components/common/Button';
+import InputCustom from '@/components/common/InputCustom';
+import { loginSchema } from '@/schema/authSchema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { LuEye, LuEyeClosed } from 'react-icons/lu';
+import { z } from 'zod';
 
-export default function Dashboard() {
+type FormValues = z.infer<typeof loginSchema>;
+
+function Login() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(loginSchema),
+  });
+  const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    console.log(data);
+    router.push('/');
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   return (
-    <div className="min-h-screen p-6">
-      {/* CORES PRIMÁRIAS */}
-      <section className="mb-8">
-        <h1 className="mb-4">Cores Primárias</h1>
+    <div className="flex flex-row text-primary-dark">
+      <div className="bg-[url('/floresta.svg')] bg-cover bg-center h-screen md:w-7/12" />
 
-        {/* Verde Escuro */}
-        <div className="p-4 rounded-lg mb-3 bg-primary-dark">
-          <span>Primary Dark (#113D31)</span>
-        </div>
-
-        {/* Verde Médio */}
-        <div className="p-4 rounded-lg mb-3 bg-primary-medium">
-          <span>Primary Medium (#2A6A59)</span>
-        </div>
-
-        {/* Amarelo Claro */}
-        <div className="p-4 rounded-lg mb-3 bg-primary-light">
-          <span className="text-black">Primary Light (#FFE489)</span>
-        </div>
-      </section>
-
-      {/* CORES SECUNDÁRIAS */}
-      <section className="mb-8">
-        <h2 className="mb-4">Cores Secundárias</h2>
-
-        {/* Vermelho */}
-        <div className="p-4 rounded-lg mb-3 bg-secondary-danger">
-          <span>Secondary Danger (#BF360C)</span>
-        </div>
-
-        {/* Creme */}
-        <div className="p-4 rounded-lg mb-3 border bg-secondary-cream">
-          <span className=" text-black">Secondary Cream (#FFF8E1)</span>
-        </div>
-
-        {/* Cinza Escuro */}
-        <div className="p-4 rounded-lg mb-3 bg-secondary-dark">
-          <span>Secondary Dark (#161616)</span>
-        </div>
-      </section>
-
-      {/* TIPOGRAFIA */}
-      <section className="mb-8">
-        <h2 className=" mb-4 text-primary-dark uppercase">
-          Sistema de Tipografia
-        </h2>
-
-        {/* Bold */}
-        <div className="mb-4 font-bold">
-          <h1 className="text-primary-dark">Gabarito Bold</h1>
-          <h2 className="text-primary-medium">Uso em Títulos, Botões.</h2>
-          <h3 className="lowercase">abcdefghijklmnopqrstuvwxyz</h3>
-          <h4 className="uppercase">abcdefghijklmnopqrstuvwxyz</h4>
-        </div>
-
-        {/* Regular */}
-        <div className="mb-4 font-normal">
-          <h1 className="text-primary-dark">Gabarito Regular</h1>
-          <h2 className="text-primary-medium">Uso em Textos</h2>
-          <h3 className="lowercase">abcdefghijklmnopqrstuvwxyz</h3>
-          <h4 className="uppercase">abcdefghijklmnopqrstuvwxyz</h4>
-        </div>
-
-        <div>
-          <Button
-            text="Continuar"
-            variant="primary"
-            onClick={() => alert('Teste!')}
+      <div className="flex bg-white min-h-screen w-full lg:w-5/12 justify-center items-center">
+        <div className="flex flex-col justify-center items-center pb-15 w-10/12">
+          <img
+            src="logo.svg"
+            alt="Logo do Sistema parecido com uma bussola"
+            className="mb-8"
           />
-        </div>
 
-        <div>
-          <Button
-            text="Continuar"
-            variant="secondary"
-            onClick={() => alert('Teste!')}
-          />
+          <div className="w-8/12">
+            <h1 className="font-bold text-3xl mb-8">Fazer Login</h1>
+
+            <form
+              className="flex flex-col justify-center items-center"
+              method="POST"
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              <InputCustom
+                {...register('email')}
+                label="Email Institucional"
+                name="email"
+                type="email"
+                placeholder="Digite seu email"
+                error={errors.email?.message}
+              />
+
+              <InputCustom
+                {...register('password')}
+                label="Senha para acesso"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Digite sua senha"
+                icon={
+                  showPassword ? (
+                    <LuEye size={20} onClick={togglePasswordVisibility} />
+                  ) : (
+                    <LuEyeClosed size={20} onClick={togglePasswordVisibility} />
+                  )
+                }
+                error={errors.password?.message}
+              />
+
+              <Button
+                variant="secondary"
+                text="Entrar"
+                className="py-3 mt-8"
+                type="submit"
+              />
+            </form>
+          </div>
+          <span className="mb-4">--- ou ---</span>
+          <a
+            href="/register"
+            className="font-normal text-sm text-primary-dark mt-1 text-center hover:underline"
+          >
+            Cadastre-se
+          </a>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
+
+export default Login;
