@@ -30,7 +30,7 @@ export default function Register() {
       const { ddi, ddd, telefone, ...institutionRest } = institutionData;
 
       const fullData = {
-        phone: `${ddi} (${ddd}) ${telefone}`,
+        phone: `${ddi}${ddd}${telefone}`,
         ...institutionRest,
         ...addressData,
       };
