@@ -20,12 +20,12 @@ const PhoneFields: React.FC<PhoneFieldsProps> = ({ register, errors }) => (
           name="ddi"
           id="ddi"
           className="border-2 rounded-md text-center w-full border-primary-dark bg-transparent h-11"
-          defaultValue="+55"
+          defaultValue="55"
         >
-          <option value="+55" className="text-black">
+          <option value="55" className="text-black">
             +55
           </option>
-          <option value="+1" className="text-black">
+          <option value="1" className="text-black">
             +1
           </option>
         </select>
