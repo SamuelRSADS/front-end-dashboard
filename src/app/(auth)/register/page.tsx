@@ -1,5 +1,6 @@
 'use client';
 import StepAddress from '@/components/auth/register/StepAddress';
+import StepConfirm from '@/components/auth/register/StepConfirm';
 import StepInstitution from '@/components/auth/register/StepInstitution';
 import { addressSchema, registerSchema } from '@/schema/authSchema';
 import { useState } from 'react';
@@ -50,20 +51,31 @@ export default function Register() {
 
   return (
     <div className="flex flex-row w-full">
-      <div className="bg-[url('/floresta.svg')] bg-cover bg-center h-screen lg:w-7/12" />
-      <div className="flex flex-col bg-white text-primary-dark justify-center items-center w-full lg:w-5/12  py-15 px-5">
-        <div className="w-8/12">
-          {step === 1 && (
-            <StepInstitution
-              onNext={handleNextStep}
-              onData={(data) => setInstitutionData(data)}
-            />
-          )}
-          {step === 2 && (
-            <StepAddress onNext={handleNextStep} onData={handleSubmit} />
-          )}
+      {step < 5 && (
+        <>
+          <div className="bg-[url('/floresta.svg')] bg-cover bg-center h-screen lg:w-7/12" />
+          <div className="flex flex-col bg-white text-primary-dark justify-center items-center w-full lg:w-5/12  py-15 px-5">
+            <div className="w-8/12">
+              {step === 1 && (
+                <StepInstitution
+                  onNext={handleNextStep}
+                  onData={(data) => setInstitutionData(data)}
+                />
+              )}
+              {step === 2 && (
+                <StepAddress onNext={handleNextStep} onData={handleSubmit} />
+              )}
+            </div>
+          </div>
+        </>
+      )}
+      {step === 5 && (
+        <div className="bg-[url('/floresta.svg')] bg-cover bg-center w-screen h-screen flex items-center justify-center">
+          <div className="flex items-center justify-center bg-white h-full md:h-2/3 p-10 md:max-w-2xl w-full md:rounded-4xl">
+            <StepConfirm />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
