@@ -24,28 +24,25 @@ function Login() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      fetch(`${API_URL}/auth/login`, {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          if (data.token) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
-            router.push('/');
-          }
-        });
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Falha na autenticação');
+      }
+
+      const result = await response.json();
+      console.log('Login bem-sucedido:', result);
+      router.push('/dashboard');
     } catch (error) {
       console.error('Erro ao enviar os dados:', error);
-      return;
     }
-
-    router.push('/');
   };
 
   const togglePasswordVisibility = () => {
