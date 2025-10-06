@@ -93,7 +93,6 @@ function Login() {
                     <LuEyeClosed size={20} onClick={togglePasswordVisibility} />
                   )
                 }
-                error={errors.password?.message}
               />
 
               <Button
