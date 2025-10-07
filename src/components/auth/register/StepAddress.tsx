@@ -8,6 +8,9 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
 import { RiLoaderLine } from 'react-icons/ri';
+import { SignupStore, useSignupStore } from '@/store/userStore';
+import { useMutation } from '@tanstack/react-query';
+import { postSignup } from '@/services/postSignup';
 
 type FormValues = z.infer<typeof addressSchema>;
 
@@ -19,10 +22,8 @@ const apiCep = async (cep: string) => {
 
 function StepAddress({
   onNext,
-  onData,
 }: {
   onNext: () => void;
-  onData: (data: FormValues) => void;
 }) {
   const {
     register,
@@ -30,21 +31,40 @@ function StepAddress({
     formState: { errors },
     watch,
     setValue,
+    reset,
     clearErrors,
   } = useForm<FormValues>({
     resolver: zodResolver(addressSchema),
+  });
+  const savedData = useSignupStore((state: SignupStore) => state.data);
+  const setAll = useSignupStore((state: SignupStore) => state.setAll);
+  const {data, mutate} = useMutation({
+    mutationFn: postSignup,
+    onError: (error) => {
+      console.error(error);
+    },
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onMutate: async (newPost) => {console.log(newPost)},
+    onSettled: (data, error) => {console.log(data, error)},
   });
 
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    onData(data);
-    onNext();
+    setAll(data);
+    mutate(data);
   };
 
   const zipCode = watch('zipCode');
 
   useEffect(() => {
+    reset(savedData);
+  }, [savedData, reset]);
+
+  useEffect(() => {
+    console.log(savedData);
     const fetchCep = async () => {
       if (zipCode && zipCode.length === 8) {
         setIsLoading(true);

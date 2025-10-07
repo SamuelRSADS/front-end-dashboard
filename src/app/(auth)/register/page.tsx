@@ -1,4 +1,6 @@
 'use client';
+import LogoUploadPage from '@/components/auth/register/Logo';
+import RepresentativePhotoPage from '@/components/auth/register/RepPhoto';
 import StepAddress from '@/components/auth/register/StepAddress';
 import StepConfirm from '@/components/auth/register/StepConfirm';
 import StepInstitution from '@/components/auth/register/StepInstitution';
@@ -12,64 +14,40 @@ type AddressFormValues = z.infer<typeof addressSchema>;
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Register() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   const [institutionData, setInstitutionData] =
     useState<InstitutionFormValues | null>(null);
 
   const handleNextStep = async () => {
-    if (step < 2) {
-      setStep((step) => step + 1);
-    }
-  };
-
-  const handleSubmit = async (addressData: AddressFormValues) => {
-    try {
-      if (!institutionData || !addressData) {
-        console.log('Dados incompletos:', { institutionData, addressData });
-        throw new Error('Dados incompletos');
-      }
-      const { ddi, ddd, telefone, ...institutionRest } = institutionData;
-
-      const fullData = {
-        phone: `${ddi}${ddd}${telefone}`,
-        ...institutionRest,
-        ...addressData,
-      };
-
-      const res = await fetch(`${API_URL}/auth/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(fullData),
-      });
-
-      console.log('res', res);
-    } catch (error) {
-      console.error('Erro ao enviar os dados:', error);
-      return;
-    }
+    setStep((step) => step + 1);
   };
 
   return (
     <div className="flex flex-row w-full">
-      {step < 5 && (
+      {step < 4 && (
         <>
           <div className="bg-[url('/floresta.svg')] bg-cover bg-center h-screen lg:w-7/12" />
           <div className="flex flex-col bg-white text-primary-dark justify-center items-center w-full lg:w-5/12  py-15 px-5">
             <div className="w-8/12">
-              {step === 1 && (
+              {step === 0 && (
                 <StepInstitution
                   onNext={handleNextStep}
-                  onData={(data) => setInstitutionData(data)}
                 />
               )}
+              {step === 1 && (
+                <StepAddress onNext={handleNextStep} />
+              )}
               {step === 2 && (
-                <StepAddress onNext={handleNextStep} onData={handleSubmit} />
+                <LogoUploadPage onNext={handleNextStep} />
+              )}
+              {step === 3 && (
+                <RepresentativePhotoPage onNext={handleNextStep} />
               )}
             </div>
           </div>
         </>
       )}
-      {step === 5 && (
+      {step === 4 && (
         <div className="bg-[url('/floresta.svg')] bg-cover bg-center w-screen h-screen flex items-center justify-center">
           <div className="flex items-center justify-center bg-white h-full md:h-2/3 p-10 md:max-w-2xl w-full md:rounded-4xl">
             <StepConfirm />

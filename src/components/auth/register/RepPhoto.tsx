@@ -7,7 +7,11 @@ import { FaCamera } from 'react-icons/fa';
 import Button from '@/components/common/Button';
 import { CiCamera } from 'react-icons/ci';
 
-function LogoUploadPage() {
+function RepresentativePhotoPage({
+    onNext,
+  }: {
+    onNext: () => void;
+  }) {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -47,10 +51,10 @@ function LogoUploadPage() {
            
 
             <div className="absolute -bottom-4 right-3 w-12 h-12 bg-primary-dark rounded-full flex justify-center items-center shadow-md">
-            <CiCamera 
-            size={25}
-            stroke='white'
-            strokeWidth={1}/>
+            <CiCamera
+              size={25}
+              stroke='white'
+              strokeWidth={1}/>
             </div>
           </div>
           
@@ -63,10 +67,11 @@ function LogoUploadPage() {
           />
 
           <h1 className="font-bold text-2xl text-gray-900 mb-2">
-            Adicione aqui o logotipo da sua instituição.
+            Envie uma foto representativa da sua 
+            instituição ou do parque.
           </h1>
           <p className="text-sm text-gray-600 mb-2">
-            Ele será exibido em destaque na página da trilha, ajudando os visitantes a reconhecerem sua marca.
+            Essa imagem será usada em tamanho reduzido no mini player do aplicativo, facilitando a identificação.\nPreferencialmente imagens sem textos.
           </p>
           <p className="text-xs text-gray-500 mb-8">
             Formatos aceitos: PNG, JPG, SVG.
@@ -95,4 +100,4 @@ function LogoUploadPage() {
   );
 }
 
-export default LogoUploadPage;
+export default RepresentativePhotoPage;
